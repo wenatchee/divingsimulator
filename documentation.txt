@@ -1,0 +1,17 @@
+Documentation for the wenatchee simulator engine.
+
+Services
+  Stat:GetLevel(Player)
+    Return: int
+  Stat:Getlevels()
+    Return: Array
+  Stat:GetStats(Player)
+    Return: Array
+  Stat:SaveStats(Player)
+    Return: Bool
+  Stat.Instances
+    Stat.Instances:Create(Player)
+      Return: Null
+    Stat.Instances:Refresh(Player)
+      Return: Null
+    
