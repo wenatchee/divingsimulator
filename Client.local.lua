@@ -4,8 +4,6 @@
 
     Let me know if you're able to find any exploits, I pay depending on serverity.
 
-    Edit May 20th, 2019
-    Normally my client's are useally this long O_o, currently 485 lines
 ]]--
 
 local MarketplaceService = game:GetService('MarketplaceService')
@@ -35,6 +33,7 @@ local InventoryFrame = ScreenGui:WaitForChild('Inventory')
 local HUD = {}
 local Shop = {}
 local Zone = {}
+local Zones = {}
 local Music = {}
 local Nodes = {}
 local Levels = {}
@@ -572,7 +571,6 @@ end
 
 Music:Player()
 
-local Zones = {}
 Zones.Unlocked = Connections['ZonesGetUnlocked']:InvokeServer()
 
 for i,Zone in pairs(ZonesFolder:GetChildren()) do
