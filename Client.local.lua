@@ -553,18 +553,50 @@ ScreenGui.Upgrade.Button.MouseButton1Click:Connect(function()
 end)
 
 function Music:Player()
-    local Sound = Instance.new('Sound')
-    Sound.Parent = ScreenGui
-    for MusicName,MusicId in pairs(Music.Songs) do
-        Sound.SoundId = MusicId
-        Sound:Play()
-        wait(1)
-        wait(Sound.TimeLength)
-    end
+
+    spawn(function()
+        
+        local Sound = Instance.new('Sound')
+        Sound.Parent = ScreenGui
+        for MusicName,MusicId in pairs(Music.Songs) do
+            Sound.SoundId = MusicId
+            Sound:Play()
+            wait(1)
+            wait(Sound.TimeLength)
+            Sound:Stop()
+        end
+        
+    end)
+
 end
 
 Music:Player()
 
+local Zones = {}
+Zones.Unlocked = Connections['ZonesGetUnlocked']:InvokeServer()
+
 for i,Zone in pairs(ZonesFolder:GetChildren()) do
+
+    if not Zones.Unlocked[Zone.Name] then
+
+        local ZoneSurfaceGuiClone = TemplateFolder:WaitForChild('ZoneSurfaceGui'):Clone()
+
+        ZoneSurfaceGuiClone.InfoFrame.ZoneName.Text = Zone.Name
+        ZoneSurfaceGuiClone.InfoFrame.Price.Text = Zone.Price.Value
+        ZoneSurfaceGuiClone.Parent = Zone
+
+        ZoneSurfaceGuiClone.InfoFrame.Upgrade.MouseButton1Click:Connect(function()
+            local Response = Connections['ZonesUnlock']:InvokeServer(Zone)
+            print(Response)
+            if Response then
+                Zone:Destroy()
+            end
+        end)
+    
+    else
+
+        Zone:Destroy()
+
+    end
 
 end
