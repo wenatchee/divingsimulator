@@ -4,6 +4,8 @@
 
     Let me know if you're able to find any exploits, I pay depending on serverity.
 
+    Edit May 20th, 2019
+    Normally my client's are useally this long O_o, currently 485 lines
 ]]--
 
 local MarketplaceService = game:GetService('MarketplaceService')
@@ -17,6 +19,7 @@ local Player = PlayersService.LocalPlayer
 local ZonesFolder = Workspace:WaitForChild('Zones')
 local NodesFolder = Workspace:WaitForChild('Nodes')
 local TemplateFolder = script:WaitForChild('Template')
+local AmbientFolder = TemplateFolder:WaitForChild('Ambient')
 local EmojieFolder = TemplateFolder:WaitForChild('Emojie')
 local SoundsFolder = TemplateFolder:WaitForChild('Sounds')
 local ConnectionsFolder = ReplicatedStorage:WaitForChild('Connections')
@@ -38,6 +41,7 @@ local Music = {}
 local Nodes = {}
 local Levels = {}
 local Sounds = {}
+local Ambient = {}
 local SellAll = {}
 local Upgrade = {}
 local Effects = {}
@@ -74,6 +78,10 @@ SellAll.Button = SellAll.Frame:WaitForChild('Button')
 table.insert(Effects, SellAll)
 table.insert(Effects, Teleport)
 table.insert(Effects, Upgrade.Gamepasses)
+
+Ambient.Sounds = {
+    ['DayAboveGround'] = AmbientFolder:WaitForChild('Outside');
+}
 
 Music.Songs = {
     ['Island - MBB'] = "rbxassetid://1555385825";
@@ -271,7 +279,7 @@ function Shop:PawnShop()
         PawnShopClone:WaitForChild('Size').Text = (Objects .. "/".. Inventory.MaxInventory)
         PawnShopClone:WaitForChild('Worth').Text = InventoryWorth
         PawnShopClone.Position = Settings.Tween['PawnShop'].StartPos
-        PawnShopClone:TweenPosition(Settings.Tween['PawnShop'].MidPos, Settings.Tween['PawnShop'].Direction, Settings.Tween['PawnShop'].EasingStyle, Settings.Tween['PawnShop'].Time)
+        PawnShopClone:TweenPosition(Settings.Tween['PawnShop'].MidPos, Settings.Tween['PawnShop'].Direction, Settings.Tween['PawnShop'].EasingStyle, Settings.Tween['PawnShop'].Time, true)
 
         PawnShopClone.SellAll.MouseButton1Click:Connect(function()
 
@@ -558,6 +566,7 @@ function Music:Player()
         local Sound = Instance.new('Sound')
         Sound.Parent = ScreenGui
         for MusicName,MusicId in pairs(Music.Songs) do
+            Sound.Volume = 0
             Sound.SoundId = MusicId
             Sound:Play()
             wait(1)
@@ -598,3 +607,56 @@ for i,Zone in pairs(ZonesFolder:GetChildren()) do
     end
 
 end
+
+Ambient.Playing = false
+Ambient.CurrentPlaying = nil
+
+for _, AmbientSound in pairs(Ambient.Sounds) do
+    AmbientSound.Parent = screenGui
+end
+
+function Ambient:Update(Sound)
+    print('asd')
+    spawn(function()
+        while true do
+            Sound:Play()
+            Ambient.CurrentPlaying = Sound
+            spawn(function()
+                while wait(0.1) do
+                    Sound:Stop()
+                end
+            end)
+            wait(Sound.TimeLength + 1)
+        end
+    end)
+end
+
+spawn(function()
+    
+    while wait(0.5) do
+        print('asd')
+
+        local PlayerYPosition = Player.Character:FindFirstChild("HumanoidRootPart").Position.Y
+
+        print(PlayerYPosition)
+
+        if PlayerYPosition and PlayerYPosition <= 237 then
+
+            if Ambient.CurrentPlaying == nil or Ambient.CurrentPlayer == Ambient.Sounds['DayAboveGround'] then
+
+                Ambient.Playing = false
+
+            end
+
+        else
+
+            if Ambient.CurrentPlaying == nil or Ambient.CurrentPlaying ~= Ambient.Sounds['DayAboveGround'] then
+                Ambient.Playing = true
+                Ambient:Update(Ambient.Sounds['DayAboveGround'])
+            end
+
+        end 
+
+    end 
+
+end)
