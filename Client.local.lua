@@ -18,6 +18,7 @@ local Player = PlayersService.LocalPlayer
 
 local ZonesFolder = Workspace:WaitForChild('Zones')
 local NodesFolder = Workspace:WaitForChild('Nodes')
+local BoardFolder = Workspace:WaitForChild('Boards')
 local TemplateFolder = script:WaitForChild('Template')
 local AmbientFolder = TemplateFolder:WaitForChild('Ambient')
 local EmojieFolder = TemplateFolder:WaitForChild('Emojie')
@@ -39,6 +40,7 @@ local Zone = {}
 local Zones = {}
 local Music = {}
 local Nodes = {}
+local Board = {}
 local Levels = {}
 local Sounds = {}
 local Ambient = {}
@@ -567,7 +569,6 @@ function Music:Player()
         local Sound = Instance.new('Sound')
         Sound.Parent = ScreenGui
         for MusicName,MusicId in pairs(Music.Songs) do
-            Sound.Volume = 0
             Sound.SoundId = MusicId
             Sound:Play()
             wait(1)
@@ -579,7 +580,7 @@ function Music:Player()
 
 end
 
---Music:Player()
+Music:Player()
 
 Zones.Unlocked = Connections['ZonesGetUnlocked']:InvokeServer()
 
@@ -635,5 +636,13 @@ spawn(function()
 
         end
 
+    end
+end)
+
+for _,v in pairs(BoardFolder:GetChildren()) do
+    for _,c in pairs(v.Board.SurfaceGui.Frame.Boosts:GetChildren()) do
+        c.Buy.MouseButton1Click:Connect(function()
+            MarketplaceService:PromptProductPurchase(Player, c.ID.Value)
+        end)
     end
 end
