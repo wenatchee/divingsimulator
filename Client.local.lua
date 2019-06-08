@@ -81,6 +81,7 @@ table.insert(Effects, Upgrade.Gamepasses)
 
 Ambient.Sounds = {
     ['DayAboveGround'] = AmbientFolder:WaitForChild('Outside');
+    ['UnderWater'] = AmbientFolder:WaitForChild('UnderWater');
 }
 
 Music.Songs = {
@@ -608,62 +609,31 @@ for i,Zone in pairs(ZonesFolder:GetChildren()) do
 
 end
 
-Ambient.Playing = false
-Ambient.CurrentPlaying = nil
-
 for _, AmbientSound in pairs(Ambient.Sounds) do
     AmbientSound.Parent = ScreenGui
 end
 
-function Ambient:Update(GaySound)
-    spawn(function()
-        Ambient.CurrentPlaying = GaySound
-        wait(1)
-        GaySound:Play()
-        spawn(function()
-            while wait(0.1) do
-                if Ambient.Playing == false then
-                    GaySound:Stop()
-                    break
-                end
-            end
-        end)
-    end)
-end
-
-Ambient.CurrentPlayer = Ambient.Sounds['DayAboveGround']
+Ambient.CurrentPlaying = Ambient.Sounds['DayAboveGround']
+Ambient.Sounds['DayAboveGround']:Play()
 
 spawn(function()
-    
-    while wait(1) do
+    while wait(0.1) do
 
         local PlayerYPosition = Player.Character:FindFirstChild("HumanoidRootPart").Position.Y
 
-        print((PlayerYPosition))
+        if PlayerYPosition <= 237 and Ambient.CurrentPlaying == Ambient.Sounds['DayAboveGround'] then
 
-        if PlayerYPosition <= 237 then
+            Ambient.CurrentPlaying = Ambient.Sounds['UnderWater']
+            Ambient.Sounds['DayAboveGround']:Stop()
+            Ambient.Sounds['UnderWater']:Play()
 
+        elseif PlayerYPosition > 237 and Ambient.CurrentPlaying ==  Ambient.Sounds['UnderWater'] then
 
-            if Ambient.CurrentPlayer == Ambient.Sounds['DayAboveGround'] then
-                
-                Ambient.CurrentPlaying = 'RandomGayAssNess'
-                Ambient.Playing = false
+            Ambient.CurrentPlaying = Ambient.Sounds['DayAboveGround']
+            Ambient.Sounds['UnderWater']:Stop()
+            Ambient.Sounds['DayAboveGround']:Play()
 
-            end
+        end
 
-        else
-
-            print('213')
-
-            if Ambient.CurrentPlaying ~= Ambient.Sounds['DayAboveGround'] then
-
-                Ambient.Playing = true
-                Ambient:Update(Ambient.Sounds['DayAboveGround'])
-
-            end
-
-        end 
-
-    end 
-
-end)
+    end
+end
