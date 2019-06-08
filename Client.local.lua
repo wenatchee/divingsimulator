@@ -578,7 +578,7 @@ function Music:Player()
 
 end
 
-Music:Player()
+--Music:Player()
 
 Zones.Unlocked = Connections['ZonesGetUnlocked']:InvokeServer()
 
@@ -612,47 +612,54 @@ Ambient.Playing = false
 Ambient.CurrentPlaying = nil
 
 for _, AmbientSound in pairs(Ambient.Sounds) do
-    AmbientSound.Parent = screenGui
+    AmbientSound.Parent = ScreenGui
 end
 
-function Ambient:Update(Sound)
-    print('asd')
+function Ambient:Update(GaySound)
     spawn(function()
-        while true do
-            Sound:Play()
-            Ambient.CurrentPlaying = Sound
-            spawn(function()
-                while wait(0.1) do
-                    Sound:Stop()
+        Ambient.CurrentPlaying = GaySound
+        wait(1)
+        GaySound:Play()
+        spawn(function()
+            while wait(0.1) do
+                if Ambient.Playing == false then
+                    GaySound:Stop()
+                    break
                 end
-            end)
-            wait(Sound.TimeLength + 1)
-        end
+            end
+        end)
     end)
 end
 
+Ambient.CurrentPlayer = Ambient.Sounds['DayAboveGround']
+
 spawn(function()
     
-    while wait(0.5) do
-        print('asd')
+    while wait(1) do
 
         local PlayerYPosition = Player.Character:FindFirstChild("HumanoidRootPart").Position.Y
 
-        print(PlayerYPosition)
+        print((PlayerYPosition))
 
-        if PlayerYPosition and PlayerYPosition <= 237 then
+        if PlayerYPosition <= 237 then
 
-            if Ambient.CurrentPlaying == nil or Ambient.CurrentPlayer == Ambient.Sounds['DayAboveGround'] then
 
+            if Ambient.CurrentPlayer == Ambient.Sounds['DayAboveGround'] then
+                
+                Ambient.CurrentPlaying = 'RandomGayAssNess'
                 Ambient.Playing = false
 
             end
 
         else
 
-            if Ambient.CurrentPlaying == nil or Ambient.CurrentPlaying ~= Ambient.Sounds['DayAboveGround'] then
+            print('213')
+
+            if Ambient.CurrentPlaying ~= Ambient.Sounds['DayAboveGround'] then
+
                 Ambient.Playing = true
                 Ambient:Update(Ambient.Sounds['DayAboveGround'])
+
             end
 
         end 
